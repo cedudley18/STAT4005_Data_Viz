@@ -1,0 +1,59 @@
+---
+title: "Homework 2/7"
+output: html_document
+---
+
+
+## Section 8.1.2: General Principles
+
+Exercise 1. Pick 1 of the 3 examples (stand your ground, climate change, or covid cases), and summarize why that graphic is not ethical. Make sure to include the context that the graph was created in from Section 8.3 in your explanation.
+
+The stand your ground graph example is unethical because it flips the y-axis without explicitly letting the viewer know. Graphs typically increase numerically as you go up the y-axis, but in this graph the numbers decrease as you go up the y-axis. This gives the visual impression that murders decreased right after the stand your ground law was passed; however, the opposite is true. This graph was meant to depict how Florida's enaction of the 2005 'Stand Your Ground' law impacted the number of murders committed each year using firearms.
+
+
+Exercise 2. Choose 2 of the 12 principles of ethical practice of data science and come up a (possibly hypothetical) scenario where each of your two chosen principles would come into play.
+
+2. Create reproducible and extensible work.
+
+This principle would come into play when someone is displaying their statistical findings, but it's impossible to track how they reached their conclusions. It's important to create reproducible work so that someone can follow your work and "redo" it, and show that your findings are valid. It is also important to create extensible work, or work that is applicable and useful. This needs less of an explanation, as what is the point of researching something if it is not important. 
+
+11. Protect the privacy and security of individuals represented in our data.
+
+Some data analysts have to work with confidential data, and it is important when working with this kind of data to protect the individuals' private information. For example, data analysts working with health data need to be especially careful due to laws protecting their information like HIPPA. It would be extremely important to protect their identity and information when working with this data, or you would be violating HIPPA.
+
+
+Exercise 3a. Find a graphic on the Internet that shows evidence that the Covid vaccine has “worked.”
+
+https://www.cdc.gov/mmwr/volumes/70/wr/figures/mm7032e3-F1.gif
+
+
+Exercise 3b. Find a graphic on the Internet that shows evidence that the Covid vaccine has “not worked.”
+
+https://www.ronjohnson.senate.gov/index.cfm?a=Files.Serve&File_id=89605B24-3D54-444C-81A9-ECB9F295281C
+
+
+## Section 8.2: Sensitive Data Viz
+
+Exercise 1. Which of the two visualizations better humanizes the victims of lynching? Why?
+
+I would say the second visualization does a better job humanizing the the victims of lynching, because as you zoom into individual points at locations you can access the victims' names and the reason for lynching. The first visualization features some names as examples, but mostly you are zooming in to see the number of lynchings at each location.
+
+
+Exercise 2. Suppose that you want to humanize the victims more in a static, non-interactive graph. Brainstorm ways that you could achieve this.
+
+I think to humanize the victims without an interactive graph we would have to display it in something other than a map, because it is impossible to show the magnitude of the amount of lynchings as well as humanize the victims of lynching and fit it all on a map. If you made the map of an individual state zoomed in, you could have the names of each victim lynched marking the location of their lynching.
+
+
+Exercise 3. A deeper discussion of these sites appears in this paper. Read the Introduction section on TayTweets and write 3 major takeaways from this section.
+
+1. One takeaway I took from the Introduction was that we cannot assume that an algorithm is neutral and separate from human prejudice. We need to be aware that because humans create algorithms, they are not neutral from prejudice. 
+2. Another takeaway is that we need to ask questions when practicing ethical visualization: do they cause harm or mislead? Do they result in net benefit socially? 
+3. A third takeaway is that choices about what data we work with and how we communicate it shape viewers' understanding of people and places, so we need to be aware of our impact and what direction it leads people.
+
+
+Exercise 4. The authors of the book Data Feminism argue that “leveraging emotion” might help us better communicate with data. Read the first four paragraphs of Chapter 3 of the Data Feminism book. One example the authors use pertains to deaths from gun violence in the United States. Examine this animated chart. Explain how the chart uses emotion to convey the losses due to gun violence better than, for example, a statement that 11,356 people were killed from gun violence in 2018.
+
+This chart does a really effective job humanizing the victims by displaying their names and showing with a curve what their life was and what it could have been. By humanizing the victims, the user of the graph feels emotional understanding the magnitude of how many people were killed by gun violence. This is more effective than just a statement that 11,356 people were killed from gun violence in 2018, because that number seems large but it's harder to understand just how many people that is and how many years people lost of their lives.
+
+
+

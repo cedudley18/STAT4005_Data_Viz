@@ -1,0 +1,29 @@
+---
+title: "Quiz 3 Take Home"
+output: html_document
+---
+
+“All work presented is my own, and I have followed all rules for collaboration.”
+Claire Dudley
+
+Question 1 (5 points). Consider the Challenger example in our course notes. Clearly, the graphic used to communicate the results is poorly made: it eliminates data points when it really should not. However, the engineers making the graph did not have “malicious intent:” they did not purposefully remove these data points to try to lie: it was a mistake. Is the visualization still unethical? Use principles from the Modern Data Science Readings to explain in a few sentences.
+
+  In the general ethical guidelines section 8.1.1 Excluding Data, guidelines are given explaining that if you CHOOSE to exclude data, you should have a good reason and explicitly say so. In the case of the Challenger, no one chose to exclude data; it was an accident. I would still argue that the visualization is unethical. In the Data Values and Practices manifesto, number 7 states we need to recognize and mitigate bias in ourselves and tha data we use, and number 8 states to present work in ways that empower others to make better informed decisions. I'm not sure this was exactly a case of bias in the presenters, but the data was biased in that it was missing key data points that make the data look different than it really was. In addition, the data engineers had a duty to present the work in a clear way that allowed NASA to make better-informed decisions, and lacking key data points leads to uninformed decision-making.
+
+
+Question 2 (4 points). Find a graphic online, other than any given in our course readings, that is unethical. Provide a link to your graphic and give a 2-3 sentence description explaining why that graphic is not ethical.
+
+https://www.tessellationtech.io/wp-content/uploads/2020/02/Bad-Dual-Axis.png
+
+This graph is unethical because the dual axis would lead one to believe that home runs and intentional walks occur around the same frequencies, which is untrue. In relation to the Data Values and Practices manifesto #9, the ethical implications of this dual axis choice are misleading people into thinking intentional walks and home runs happen at the same frequencies, which is untrue.
+
+
+Question 3 (3 points). Explain, in your own words, what each of the following Git terms mean:
+
+commit - a commit, in Git, is capturing a project at its current status with whatever changes you have made since your previous commit. It is Git's version of saving a current version of your project or document.
+
+push - pushing is uploading your commits from your local repository (or on your computer/desktop) into the remote repository, where if public can be accessed and viewed by others.
+
+pull - pulling is kind of the reverse of pushing, where you are retrieving documents/projects from the remote repository to access from your local repository.
+
+Question 4 (3 points). These three points are given if you successfully committed with a commit message and pushed your .Rmd and .html files to your GitHub account.

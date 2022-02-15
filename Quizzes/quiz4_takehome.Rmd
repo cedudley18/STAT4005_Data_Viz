@@ -1,0 +1,53 @@
+---
+title: "Quiz 4 Take Home"
+output: html_document
+---
+
+All work presented is my own, and I have followed all rules for collaboration.
+Claire Dudley
+
+Collaboration Reminder: You may work with other students who are in our class on the take-home quiz, but you must list who you worked with at the top of your quiz. Write the name of any student(s) that you collaborated with in the space below this (ignore this if you did not collaborate with any students).
+Kaden Pickering
+Emil Zetterquist
+
+
+Use the leaflet package and the us.cities data set from the maps package to make a Zoom-able map of the 50 U.S. capital cities. When you click on a marker for a capital city, both the city name and state as well as the pop (population) should be displayed.
+
+```{r}
+library(leaflet)
+library(tidyverse)
+library(maps)
+library(devtools)
+us.cities <- maps::us.cities
+```
+
+```{r}
+us.capitals <-
+  us.cities %>%
+  filter(capital == 2)
+  
+```
+
+
+```{r}
+content <- us.capitals %>%
+  mutate(popup = us.capitals$name)
+```
+
+```{r}
+cities_map <- leaflet(us.capitals) %>%
+  setView(lng = -98.583, lat = 39.833, zoom = 4) %>% 
+  addTiles() %>% 
+  addProviderTiles(providers$Stamen.Watercolor) %>% 
+  addMarkers(lng = us.capitals$long, lat = us.capitals$lat,
+             clusterOptions = markerClusterOptions(),
+             popup = content$popup)
+
+cities_map
+```
+
+
+
+Note that, in the us.cities data set, state capitals are given a value of 2 in the capital variable.
+
+A second note is that if you cannot figure out how to get two “things” (in this case name and population) to display in Leaflet, you would just lose a single point for the quiz (so don’t spend too much time on that part unless you are inclined to do so).

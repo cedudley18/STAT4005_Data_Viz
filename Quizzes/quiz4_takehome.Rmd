@@ -41,7 +41,8 @@ cities_map <- leaflet(us.capitals) %>%
   addProviderTiles(providers$Stamen.Watercolor) %>% 
   addMarkers(lng = us.capitals$long, lat = us.capitals$lat,
              clusterOptions = markerClusterOptions(),
-             popup = content$popup)
+             popup = paste("Name:", us.capitals$name,
+                           "<br>", "Population:", us.capitals$pop, "<br>"))
 
 cities_map
 ```

@@ -1,0 +1,111 @@
+---
+title: "Homework 2/14"
+output: html_document
+---
+I worked with Kaden Pickering and Emil Zetterquist on this homework.
+```{r}
+library(tidyverse)
+library(maps)
+library(here)
+hpi_df <- read_csv(here("data/hpi-tidy.csv"))
+world_df <- ggplot2::map_data("world")
+world_df %>% nrow()
+```
+
+## Exercise 1
+```{r}
+ggplot(data = world_df,
+       mapping = aes(x = long, y = lat,
+                     group = group)) + 
+    geom_polygon(fill = "white", colour = "black") +
+  coord_map(projection = "albers", lat0 = 39, lat1 = 45) +
+  theme(axis.text = element_blank()) +
+  theme_void() + 
+  coord_map(projection = "mercator")
+```
+
+```{r}
+world_df <-
+  world_df %>%
+  rename("Country" = "region")
+```
+
+```{r}
+hpi_world <-
+  left_join(world_df, hpi_df,
+            by = "Country")
+```
+
+```{r}
+ggplot(data = hpi_world,
+       mapping = aes(x = long, y = lat,
+                     group = group, fill = LifeExpectancy)) + 
+    geom_polygon(colour = "black") +
+  theme_void() + 
+  coord_map(projection = "mercator") +
+  scale_fill_viridis_c()
+```
+
+## Exercise 2
+```{r}
+world_df <-
+  world_df %>%
+  mutate(across("Country", str_replace, "USA", "United States of America"))
+```
+
+```{r}
+hpi_world <-
+  left_join(world_df, hpi_df,
+            by = "Country")
+```
+
+```{r}
+ggplot(data = hpi_world,
+       mapping = aes(x = long, y = lat,
+                     group = group, fill = LifeExpectancy)) + 
+    geom_polygon(colour = "black") +
+  theme_void() + 
+  coord_map(projection = "mercator") +
+  scale_fill_viridis_c()
+```
+
+## Exercise 3
+
+```{r}
+ggplot(data = hpi_world,
+       mapping = aes(x = long, y = lat,
+                     group = group, fill = LifeExpectancy)) + 
+    geom_polygon(colour = "black") +
+  theme_void() + 
+  coord_map(projection = "mercator", xlim = c(-180,180)) +
+  scale_fill_viridis_c()
+```
+
+## Exercise 4
+
+  The Mercator projection makes countries closer to the poles distortedly big. Greenland is 550% too big in the Mercator projection as it appears the same size as Africa when it should fit into Africa 14 times.
+  
+## Exercise 5
+
+```{r}
+ggplot(data = hpi_world,
+       mapping = aes(x = long, y = lat,
+                     group = group, fill = LifeExpectancy)) + 
+    geom_polygon(colour = "black") +
+  theme_void() + 
+  coord_map(projection = "globular", xlim = c(-180,180)) +
+  scale_fill_viridis_c()
+```
+
+```{r}
+ggplot(data = hpi_world,
+       mapping = aes(x = long, y = lat,
+                     group = group, fill = LifeExpectancy)) + 
+    geom_polygon(colour = "black") +
+  theme_void() + 
+  coord_map(projection = "gilbert", xlim = c(-180,180)) +
+  scale_fill_viridis_c()
+```
+
+In both projections, Greenland becomes relatively much smaller than the mercator projection. Greenland is especially small in the globular projection.
+

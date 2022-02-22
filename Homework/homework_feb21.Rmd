@@ -1,0 +1,19 @@
+---
+title: "Feb 21 homework"
+output: html_document
+---
+
+# Section 9.1
+
+Exercise 1. What makes the app given in the first tab interactive? In other words, what is a user allowed to change in the app?
+  The user can change n (the number of subjects), the intercept of the line, the slope of the line, and the standard deviation of the residuals to see how these changes impact the OLS line of best fit.
+
+Exercise 2. What are the outputs of the app? Are the outputs graphs, tables, or both?
+  The outputs are graphs and tables. There is a graph displaying the line of best fit, graphs representing sources of variation, and then an ANOVA table as well as a regression summary table.
+  
+Exercise 3. Write a short one paragraph description about the app you selected, including what the app allows the user to change, what the output is, and one interesting thing you found in the app.
+  I selected The Masters shiny app, which allows users to explore and visualize some of the history of the Masters golf tournament. The app initially displays a graph of all of the scores of the Masters tournament from 1957 to 2021, with scores that missed the cut in black, top 10 scores in yellow, winners' scores in green, and all other scores in grey. The user can change what is displayed by selecting what years to show, which scores it wants to show (maybe just winners and top 10), and can even show the 36-hole cut line. The user can also select up to 3 players to highlight. By clicking on a point, you can see what player that point represents. One thing I found interesting about the app was the "Scoring Averages" section, where you can see the lowest career scorers of the Masters in a density plot. You can also look at the density plot of any given player in the "Player Pages" tab.
+
+
+  
+  

@@ -1,0 +1,86 @@
+---
+title: "Quiz 5 Take Home"
+output: html_document
+---
+
+Statement of Integrity: Copy and paste the following statement and then sign your name (by typing it) on the line below.
+
+“All work presented is my own, and I have followed all rules for collaboration.”
+Claire Dudley
+
+Collaboration Reminder: You may work with other students who are in our class on the take-home quiz, but you must list who you worked with at the top of your quiz. Write the name of any student(s) that you collaborated with in the space below this (ignore this if you did not collaborate with any students).
+Kaden Pickering
+
+
+
+Use the STAT 113 survey data set to explore the trend in the popularity of Facebook over time. Do this in 2 ways:
+
+(7 points). Construct a graph that uses the number of Facebook friends each student has.
+
+```{r}
+library(tidyverse)
+library(here)
+statsurvey <- read.csv(here("data/stat113_survey.csv"))
+```
+
+filter out NAs in Facebook
+```{r}
+statsurvey1 <-
+  statsurvey %>%
+  filter(!is.na(Facebook),
+         !Facebook == 0)
+
+stat_survey_facebook <-
+  statsurvey1 %>%
+  mutate(time_both = fct_inorder(time_both)) %>%
+  group_by(time_both) %>%
+  summarise(meanfb = mean(Facebook),
+            sdfb = sd(Facebook),
+            nfb = n()) %>%
+  mutate(l_se = meanfb - sdfb / sqrt(nfb),
+         u_se = meanfb + sdfb / sqrt(nfb))
+```
+
+
+```{r}
+ggplot(data = stat_survey_facebook, aes(x = time_both,
+                              y = meanfb)) + 
+  geom_point() +
+  geom_errorbar(aes(ymin = l_se, ymax = u_se)) +
+  labs(x = "Semester",
+       y = "Average Number of Facebook Friends")
+```
+
+
+(7 points). Construct a graph that uses the proportion of students that have Facebook (assuming that 0 friends means that the student does not have a Facebook account and more than 0 friends means that the student does have a Facebook account).
+
+```{r}
+stat_survey_fb <-
+  statsurvey %>%
+  filter(!is.na(Facebook)) 
+         
+ stat_survey_fb$hasfacebook = with(stat_survey_fb, ifelse(Facebook > 0, 1, 0))
+```
+
+```{r}
+ stat_survey_fb <-
+  stat_survey_fb %>%
+ mutate(time_both = fct_inorder(time_both)) %>%
+  group_by(time_both) %>%
+  summarise(meanhasfb = mean(hasfacebook),
+            sdhasfb = sd(hasfacebook),
+            nhasfb = n()) %>%
+  mutate(l_se = meanhasfb - sdhasfb / sqrt(nhasfb),
+         u_se = meanhasfb + sdhasfb / sqrt(nhasfb))
+```
+
+```{r}
+ggplot(data = stat_survey_fb, aes(x = time_both,
+                              y = meanhasfb)) + 
+  geom_point() +
+  geom_errorbar(aes(ymin = l_se, ymax = u_se)) +
+  labs(x = "Semester",
+       y = "Proportion of Students with Facebook")
+```
+
+

@@ -1,0 +1,240 @@
+---
+title: "Homework Feb 28"
+output: html_document
+---
+
+Exercise 1. In the tennis app, change the histogram input from a sliderInput() to a numericInput().
+```{r}
+library(tidyverse)
+```
+
+
+```{r}
+
+var_choices <- names(df)[3:7]
+
+library(shiny)
+
+ui <- fluidPage(
+  sidebarLayout(sidebarPanel(
+    selectizeInput("playerchoice",
+                   label = "Choose a Player", choices = levels(factor(df$player)),
+                   selected = "Aryna Sabalenka"),
+    radioButtons("varchoice", label = "Choose a Statistic",
+                 choices = var_choices),
+    numericInput("binnumber", label = "Choose a Number of Bins", 
+                min = 1, max = 50, value = 15, step = 1)),
+    mainPanel(plotOutput("histgraph"))
+  )
+)
+
+server <- function(input, output, session) {
+  
+  df_sub <- reactive({
+    df %>% filter(player == input$playerchoice)
+  })
+  
+  hist_plot <- reactive({
+    # ggplot(df_sub(), aes_string(x = input$varchoice)) +
+    # geom_histogram(colour = "black", fill = "white", bins = 15)
+    ggplot(df_sub(), aes(x = .data[[input$varchoice]])) +
+      geom_histogram(colour = "black", fill = "white", bins = input$binnumber) +
+      theme_grey(base_size = 22)
+  })
+  
+  output$histgraph <- renderPlot({
+    hist_plot()
+  })
+  
+
+}
+
+shinyApp(ui, server)
+```
+
+
+Exercise 2. In the tennis app, change the histogram input back to sliderinput(). Then, apply 2.2.8 Exercise 3 in Mastering Shiny to the tennis app slider.
+
+```{r}
+var_choices <- names(df)[3:7]
+
+library(shiny)
+
+ui <- fluidPage(
+  sidebarLayout(sidebarPanel(
+    selectizeInput("playerchoice",
+                   label = "Choose a Player", choices = levels(factor(df$player)),
+                   selected = "Aryna Sabalenka"),
+    radioButtons("varchoice", label = "Choose a Statistic",
+                 choices = var_choices),
+    sliderInput("binnumber", label = "Choose a Number of Bins", 
+                min = 0, max = 100, value = 15, step = 5, animate = TRUE)),
+    mainPanel(plotOutput("histgraph"))
+  )
+)
+
+server <- function(input, output, session) {
+  
+  df_sub <- reactive({
+    df %>% filter(player == input$playerchoice)
+  })
+  
+  hist_plot <- reactive({
+    # ggplot(df_sub(), aes_string(x = input$varchoice)) +
+    # geom_histogram(colour = "black", fill = "white", bins = 15)
+    ggplot(df_sub(), aes(x = .data[[input$varchoice]])) +
+      geom_histogram(colour = "black", fill = "white", bins = input$binnumber) +
+      theme_grey(base_size = 22)
+  })
+  
+  output$histgraph <- renderPlot({
+    hist_plot()
+  })
+  
+
+}
+
+shinyApp(ui, server)
+```
+
+
+Exercise 3. In the SLU majors app, change the major input to radioButtons() so that the user can only select mathematics, statistics, or computer science as the major.
+```{r}
+df <- read_excel(here("data/slu_graduates_17_21.xlsx"))
+
+## fixes error in the data
+df <- df %>% mutate(across(everything(),
+                           .fns = ~replace(., . == "STATS" , "STAT")))
+
+df_long <- df %>% pivot_longer(3:8, names_to = "type", values_to = "discipline")
+df_major <- df_long %>%
+  filter(type == "major1" | type == "major2" | type == "major3")
+
+df_stat <- df_major %>% filter(discipline == "STAT")
+df_statfull <- semi_join(df_long, df_stat, by = "adm_id") %>%
+  filter(type == "major1" |
+           type == "major2" |
+           type == "major3")
+
+df_nostat <- df_statfull %>% filter(discipline != "STAT" &
+                                      !is.na(discipline)) %>%
+  group_by(discipline) %>%
+  summarise(nstudent = n()) %>%
+  mutate(discipline = fct_reorder(discipline, nstudent))
+
+df_math_maj <- df_statfull %>%
+  filter(major)
+```
+
+```{r}
+library(shiny)
+
+ui <- fluidPage(
+  sidebarLayout(
+    sidebarPanel(radioButtons(inputId = "majorchoice",
+                                label = "Choose a Major",
+                                choices = list("CS", "STAT", "MATH"))),
+    mainPanel(plotOutput(outputId = "majorplot"))
+  )
+)
+
+server <- function(input, output, session) {
+  
+  df_update <- reactive({
+    df_stat <- df_major %>% filter(discipline == input$majorchoice)
+    
+    
+    df_statfull <- semi_join(df_long, df_stat, by = "adm_id") %>%
+      filter(type == "major1" |
+               type == "major2" |
+               type == "major3")
+    
+    df_nostat <- df_statfull %>% filter(discipline != input$majorchoice &
+                                          !is.na(discipline)) %>%
+      group_by(discipline) %>%
+      summarise(nstudent = n()) %>%
+      mutate(discipline = fct_reorder(discipline, nstudent))
+    
+  })
+  
+  output$majorplot <- renderPlot({
+    ggplot(data = df_update(), aes(x = discipline, y = nstudent)) +
+      geom_col() +
+      coord_flip()
+  })
+}
+
+shinyApp(ui, server)
+
+```
+
+
+Exercise 4. In the SLU majors app, add a table output below the plot that shows the number of Female majors and the number of Male majors for a major that the user selects.
+
+```{r}
+library(shiny)
+
+ui <- fluidPage(
+  sidebarLayout(
+    sidebarPanel(selectizeInput(inputId = "majorchoice",
+                                label = "Choose a Major",
+                                choices = factor(df$major1))),
+    mainPanel(plotOutput(outputId = "majorplot"),
+              tableOutput("table"))
+  )
+)
+
+server <- function(input, output, session) {
+  
+  df_update <- reactive({
+    df_stat <- df_major %>% filter(discipline == input$majorchoice)
+    
+    
+    df_statfull <- semi_join(df_long, df_stat, by = "adm_id") %>%
+      filter(type == "major1" |
+               type == "major2" |
+               type == "major3")
+    
+    df_nostat <- df_statfull %>% filter(discipline != input$majorchoice &
+                                          !is.na(discipline)) %>%
+      group_by(discipline) %>%
+      summarise(nstudent = n()) %>%
+      mutate(discipline = fct_reorder(discipline, nstudent))
+    
+  })
+  # tried to use this to display sex in table, couldn't get it to work
+# df_update2 <- reactive({
+  #  df_stat <- df_major %>% filter(discipline == input$majorchoice)
+    
+    
+  #  df_statfull <- semi_join(df_long, df_stat, by = "adm_id") %>%
+  #    filter(type == "major1" |
+  #             type == "major2" |
+  #             type == "major3")
+    
+  #  df_nostat <- df_statfull %>% filter(discipline != input$majorchoice &
+  #                                        !is.na(discipline)) %>%
+   #   group_by(sex) %>%
+   #   summarise(nstudent = n()) %>%
+   #   ungroup() %>%
+     # group_by(discipline) %>%
+    #  mutate(discipline = fct_reorder(discipline, nstudent))
+    
+# })
+
+  
+  output$majorplot <- renderPlot({
+    ggplot(data = df_update(), aes(x = discipline, y = nstudent)) +
+      geom_col() +
+      coord_flip()
+  })
+  
+  output$table <- renderTable({
+    df_update()
+  })
+}
+
+shinyApp(ui, server)
+
+```
+

@@ -1,0 +1,141 @@
+---
+title: "Data Visualization Concepts: Mini Tutorial 1"
+author: "Claire Dudley"
+date: "3/7/2022"
+output: html_document
+---
+
+“All work presented is my own. I have not communicated with or worked with anyone else on this exam.”
+Claire Dudley
+
+  The goal of this section is to review the Data Visualization Concepts we learned in the first couple weeks of class, particularly Grammar of Graphics. Our goal in Data Visualization should be to provide insight into data in a clear and meaningful way as well as an honest way. To convey these topics and overall goal, I am going to be using the stat113 dataset.
+  
+```{r}
+library(tidyverse)
+library(here)
+stat113 <- read_csv(here("data/stat113.csv"))
+
+stat113 <- as.data.frame(stat113)
+
+
+```
+
+```{r}
+stat113 <- stat113[complete.cases(stat113$Sport),]
+stat113 <- stat113[!is.na(stat113$Sport),]
+stat113 <- stat113[!is.na(stat113$Sex),]
+```
+  
+  The Grammar of Graphics includes 7 parameters that aim to precisely describe the components of a graphic or visualization. I am going to create a graph that includes all 7 components, which are as follows:
+  * <DATA> : the data set
+  * <MAPPINGS>: an aesthetic mapping
+  * <GEOM_FUNCTION>: a geometric object
+  * <STAT>: a statistical transformation
+  * <POSITION>: a position adjustment
+  * <FACET_FUNCTION>: subplots
+  * <COORDINATE_FUNCTION>: a coordinate system
+  
+ I am plotting the average amount of exercise for students comparing across grades, sex, and whether or not the student plays a sport.
+ 
+ First, we specify the data, which is the data we use for the plot. Here it is stat113. Next, we set the mappings, which are specified in the aesthetics function. Here, I just set an x position, y position, and fill. After this is the geom_function, or the geometric object that represents our data. I used geom_bar() to look at average number of ours of exercise between people who play sports and people who don't play sports, our categorical variable. I then used facet_wrap in the facet parameter, which is useful to look at different subsets of the data, in this case by class year. Stat tells the geom what kind of statistical transformation we want to do. In this case, it is "summary" and the geom then defaults to mean, so we see the mean exercise values instead of the summed exercise values for different groups. Position is often used in barplots to change how we display the bars: in this case, I chose "dodge" so we can display groups side by side. Finally, coordinate is often changed for maps, and is usually a standard Cartesian. In this case I used coord_flip() to flip the x and y coordinates of the Cartesian system.
+```{r}
+ggplot(data = stat113, aes(x = Sport, 
+                           y = Exercise, 
+                           fill = Sex)) + 
+  geom_bar(position = "dodge", 
+           stat = "summary") + 
+  facet_wrap(~Year) +
+  coord_flip() +
+  theme_bw()
+```
+
+
+  One important topic in Data Visualization is how we visually decode graphs. Sometimes, data is presented in a way that is hard to understand and perceptually confuses the viewer. One example is a rectangular treemap, which uses areas to compare sizes. Heer & Bostock (2010) replicated an earlier stydy by Cleveland and McGill on which charts people were best at distinguishing between the sizes of different values in. Treemaps and circular area graphs were where people had the most trouble distinguishing between groups.
+  
+  In the following graph, I used the stat survey facebook dataset we created in class where we compared the difference in number of facebook friends across semesters. This treemap shows the difference in the number of students each semester that have facebook, but it is really hard to tell the difference in the areas and it is difficult to distinguish between the different semesters.
+  
+```{r}
+# stat_survey_facebook2 <- write.csv(stat_survey_facebook, "data/stat_survey_facebook2.csv")
+stat_survey_facebook2 <- read_csv(here("data/stat_survey_facebook2.csv"))
+```
+  
+```{r}
+library(treemapify)
+ggplot(data = stat_survey_facebook2, aes(area = nfb, 
+                                        fill = time_both)) +
+  geom_treemap() +
+  labs(fill = "Semester")
+```
+
+  The following bar chart does a much better job allowing the viewer to compare across semesters the number of students using Facebook. 
+
+```{r}
+ggplot(data = stat_survey_facebook2, aes(x = time_both,
+                                        y = nfb)) + 
+         geom_bar(stat = "identity") + 
+  theme_bw() + 
+  theme(axis.text.x = element_text(angle = 45)) + 
+  labs(x = "Semester", 
+       y = "Number of People using Facebook")
+  
+```
+
+  Another important topic in data visualization is avoiding bad visualizations, particularly bad perceptions. Stacked bar charts are helpful for showing overall trends, but it can be hard to see the difference between categories within the bar. Below is an example using the stat survey dataset again, comparing how often different Years exercise across semesters.
+  
+```{r}
+# statsurvey <- write.csv(statsurvey, "data/statsurvey.csv")
+statsurvey <- read_csv(here("data/statsurvey.csv"))
+```
+
+```{r}
+statsurvey <-
+  statsurvey %>%
+  mutate(Year = as.factor(Year))
+```
+
+```{r}
+statsurvey <- statsurvey[!is.na(statsurvey$Year),]
+statsurvey <- statsurvey %>%
+  filter(!(Year == 0))
+```
+
+```{r}
+ggplot(data = statsurvey, aes(x = time_both, 
+                           y = Exercise, 
+                           fill = Year)) + 
+  geom_bar(position = "stack", 
+           stat = "summary") + 
+
+  theme_bw() +
+  labs(x = "Semester") +
+  theme(axis.text.x = element_text(angle = 45))
+```
+  
+  It is hard to compare different grades across semester. The next graph faceted by year helps with this.
+  
+```{r}
+ggplot(data = statsurvey, aes(x = time_both,
+                              y = Exercise)) +
+  geom_bar(stat = "summary") + theme_bw() +
+  labs(x = "Semester") + 
+  theme(axis.text.x = element_text(angle = 90, size = 6)) +
+  facet_wrap(~Year) + 
+  theme_bw()
+```
+  
+  If we want to compare across grades more closely, a percent stacked barchart will also be easier to look at.
+  
+```{r}
+ggplot(data = statsurvey, aes(x = time_both, 
+                              y = Exercise,
+                              fill = Year)) +
+  geom_bar(position = "fill", stat = "identity") + 
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 60)) +
+  labs(x = "Semester")
+```
+  
+  
+  
+  
+  

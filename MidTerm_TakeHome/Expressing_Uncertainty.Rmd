@@ -1,0 +1,65 @@
+---
+title: "Expressing Uncertainty"
+author: "Claire Dudley"
+date: "3/8/2022"
+output: html_document
+---
+
+  This mini tutorial is focused on expressing variability, which is important to do when presenting data visually. It is important to showcase variability and not just means, as some graphs do, like bar plots. For this tutorial, I will be using the mlb dataset representing mlb players' salary statistics. I will be just using the variables Team and Salary.
+  
+```{r}
+library(tidyverse)
+library(here)
+mlb_df <- read_csv(here("data/mlb2016.csv"))
+```
+  
+  Bar plots, especially when used to represent summary statistics, are very unuseful in that they are only displaying means and no variability. The next bar plot shows the average number of wins per season for every team in the NFL from 2000-2019:
+
+```{r}
+mlb_df$Salary = substring(mlb_df$Salary, 2)
+mlb_df$Salary <- as.numeric(gsub(",","", mlb_df$Salary))
+mlb_df$Team <- fct_reorder(mlb_df$Team, -mlb_df$Salary, mean)
+```
+
+```{r}
+ggplot(data = mlb_df, aes(x = Team, y = Salary)) + 
+  geom_bar(stat = "summary") +
+  labs(x = "Team", y = "Average Salary of a Player") +
+  theme(axis.text.x = element_text(angle = 90)) 
+  
+```
+
+  While it is nice to see the averages, we can't tell any of the variability in this dataset, whether it be in standard deviations or across seasons. The following graph shows the standard deviations along with the averages:
+  
+```{r}
+mlb_df2 <-
+  mlb_df %>%
+  group_by(Team) %>%
+summarise(meansal = mean(Salary),
+            sdsal = sd(Salary),
+            nsal = n()) %>%
+  mutate(l_se = meansal - sdsal / sqrt(nsal),
+         u_se = meansal + sdsal / sqrt(nsal))
+```
+
+```{r}
+ggplot(data = mlb_df2, aes(x = Team,
+                              y = meansal)) + 
+  geom_point() +
+  geom_errorbar(aes(ymin = l_se, ymax = u_se)) +
+  labs(x = "Team",
+       y = "Average Salary of a Player") +
+  theme(axis.text.x = element_text(angle = 90)) 
+```
+
+  We can also use boxplots to even better show variability:
+```{r}
+ggplot(data = mlb_df, aes(x = Team, y = Salary)) + 
+  geom_boxplot()  +
+   labs(x = "Team",
+       y = "Average Salary of a Player") +
+  theme(axis.text.x = element_text(angle = 90)) 
+```
+  
+  After looking at the first two graphs, we may assume that the New York Yankees pay all of their players a lot more than Tampa Bay, but looking at the third graph, clearly the elite players on the highest paid teams are pulling up their average quite a bit.
+

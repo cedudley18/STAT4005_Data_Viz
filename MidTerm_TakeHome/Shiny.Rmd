@@ -1,0 +1,63 @@
+---
+title: "Shiny"
+author: "Claire Dudley"
+date: "3/8/2022"
+output: html_document
+---
+
+  The goal of this mini tutorial is to introduce you to Shiny as well as Reactivity. Shiny is an R package where we can make interactive apps. I used the videogame dataset in our data folder, and used the variables meta_cat_rating, metascore, and average_playtime.
+  
+  In this ShinyApp, the user is given the choice to look at games that were reviewed one of four ways, with the options being Generally Favorable, Generally Unfavorable, Mixed Reviews, and Universal Acclaim. After selecting one of these ratings, the user can choose a variable to look at the distribution of in the form of a histogram. The two variables in this case are metascore and average playtime.
+  
+  Shiny has two main parts to its structure, the ui and the server. In the ui is where you set up what the user will choose to be shown. In this case I used a sidebarlayout that features a pulldown menu where you choose the rating, and buttons where you select the variable. In the ui you also specify what will be displayed in the mainpanel, or in my case, a histogram. In the server, I have both my reactive function that allows the graph to react and filter out what the user selects as a category (Rating), and I have my plot. You then use shinyApp(ui, server) to run the app.
+  
+  In Shiny, you have an input, and an output. We have two inputs in this app, or what the user enters into it, the rating and the variable. Reactivity, in this case, is that the output reacts based on what we enter in the input. So that the dataset filters to the correct rating, we have to make a reactive function in the server that filters the dataset to the rating that the user selects. In the outputted histogram, the x value, or the variable the user selects, is just coded as the inputted variable choice. 
+  
+```{r}
+library(tidyverse)
+library(here)
+library(shiny)
+
+video_game <- read_csv(here("data/videogame_clean.csv"))
+video_game <- video_game[!is.na(video_game$metascore),]
+video_game <- video_game[!is.na(video_game$average_playtime),]
+video_game <- video_game[!is.na(video_game$meta_cat_factor),]
+video_game <- video_game %>%
+  filter(!(average_playtime == 0))
+
+var_choices <- names(video_game)[c(7,14)]
+
+
+ui <- fluidPage(
+  sidebarLayout(sidebarPanel(
+    selectizeInput("metafactorchoice",
+                   label = "Choose a Rating", choices = levels(factor(video_game$meta_cat_factor)),
+                   selected = "Mixed Reviews"),
+    radioButtons("varchoice", label = "Choose a Variable",
+                 choices = var_choices)),
+    mainPanel(plotOutput("histogram"))
+  )
+)
+
+server <- function(input, output, session) {
+  
+  video_rating <- reactive({
+    video_game %>% dplyr::filter(meta_cat_factor == input$metafactorchoice)
+  })
+
+  
+  
+  
+   
+  output$histogram <- renderPlot({
+    ggplot(data = video_rating(), aes(x  = .data[[input$varchoice]])) + geom_histogram() + theme_minimal()
+  })
+  
+  
+}
+
+shinyApp(ui, server)
+
+```
+  
+  

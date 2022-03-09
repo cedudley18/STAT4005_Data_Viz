@@ -1,0 +1,68 @@
+---
+title: "Mapping: Mini Tutorial 2"
+author: "Claire Dudley"
+date: "3/8/2022"
+output: html_document
+---
+
+  This mini tutorial goes with the data visualization topic of mapping. Mapping is useful in data visualization in that it allows us to visualize information across different places. This mini tutorial is going to display some of the ways we use mapping using the urbnmapr package, which provides state and county shapefiles that you can use to map with ggplot. Shapefiles are from the US Census Bureau. I am going to be using the data associated with the geometry for the mapping, the county and states, and variables homeownership rate and median household income to show how we can map different variables across states.
+
+```{r}
+library(tidyverse)
+# install.packages("devtools")
+# devtools::install_github("UrbanInstitute/urbnmapr")
+library(urbnmapr)
+states_sf <- get_urbn_map("states", sf = TRUE)
+counties_sf <- get_urbn_map("counties", sf = TRUE)
+```
+
+
+  First, we can use geom_polygon() to make a basic plot of the U.S. using the states shapefile from the urbnmapr package.
+```{r}
+ggplot(data = states_sf, aes()) + 
+  geom_sf(fill = "grey")
+```
+
+  We can then look at the counties of an individual state. I picked Massachusetts as it's where I live.
+  
+```{r}
+counties_sf %>%
+  filter(state_abbv == "MA") %>%
+  ggplot(aes()) + geom_sf(fill = "grey") 
+```
+  
+  Using county data from the package, we can now look at variables across counties, like homeownership rates. We first have to join together the countydata to the county shapefile that allows us to map these variables across the state.
+
+```{r}
+countydata <- urbnmapr::countydata
+household_data <- left_join(counties_sf, countydata, by = "county_fips")
+```
+
+Now, we can map home ownership rate across the state:
+```{r}
+household_data %>%
+  filter(state_name == "Massachusetts") %>%
+  ggplot(aes(fill = horate)) + 
+  geom_sf() + 
+  labs(fill = "Homeownership rate") +
+  scale_fill_viridis_c() +
+  theme_minimal()
+```
+
+
+We can also map median home income with this dataset:
+
+```{r}
+household_data %>%
+  filter(state_name == "Massachusetts") %>%
+  ggplot(aes(fill = medhhincome)) + 
+  geom_sf() + 
+  labs(fill = "Median Income") +
+  scale_fill_viridis_c() +
+  theme_minimal()
+```
+
+
+
+
+
